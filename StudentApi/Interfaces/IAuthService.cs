@@ -1,4 +1,4 @@
-﻿using StudentApi.Models.Authorization;
+﻿using StudentApi.Entities.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +9,7 @@ namespace StudentApi.Interfaces
     public interface IAuthService
     {
         Task<UserInfo> AuthenticateUser(UserInfo info);
+
+        Task<string> GetUserPassword(string userId);
     }
 }

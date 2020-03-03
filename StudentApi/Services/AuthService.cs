@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudentApi.Helpers;
 using StudentApi.Interfaces;
-using StudentApi.Models.Authorization;
+using StudentApi.Entities.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +23,12 @@ namespace StudentApi.Services
         {
             string cryptedPass = Cryptor.Encrypt(info.Password);
             return await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == cryptedPass).FirstOrDefaultAsync();
+        }
+
+        public async Task<string> GetUserPassword(string userId)
+        {
+            var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+            return user.Password;
         }
     }
 }

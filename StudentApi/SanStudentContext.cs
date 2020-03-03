@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StudentApi.Models.Authorization;
-using StudentApi.Models.MainPage;
+using StudentApi.Entities.Authorization;
+using StudentApi.Entities.MainPage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

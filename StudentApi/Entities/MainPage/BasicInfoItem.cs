@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StudentApi.Models.MainPage
+namespace StudentApi.Entities.MainPage
 {
     public class BasicInfoItem
     {

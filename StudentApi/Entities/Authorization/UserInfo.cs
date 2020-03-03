@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StudentApi.Models.Authorization
+namespace StudentApi.Entities.Authorization
 {
     public class UserInfo
     {

@@ -1,4 +1,4 @@
-﻿using StudentApi.Models.MainPage;
+﻿using StudentApi.Entities.MainPage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
