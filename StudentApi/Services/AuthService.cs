@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using StudentApi.Helpers;
 using StudentApi.Interfaces;
 using StudentApi.Models.Authorization;
 using System;
@@ -17,10 +18,11 @@ namespace StudentApi.Services
         public AuthService(SanStudentContext ctx)
         {
             context = ctx;
-        }
+        }                                                                  
         public async Task<UserInfo> AuthenticateUser(UserInfo info)
         {
-            return await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == info.Password).FirstOrDefaultAsync();
+            string cryptedPass = Cryptor.Encrypt(info.Password);
+            return await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == cryptedPass).FirstOrDefaultAsync();
         }
     }
 }

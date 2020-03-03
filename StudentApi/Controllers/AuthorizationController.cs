@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using StudentApi.Helpers;
 using StudentApi.Interfaces;
 using StudentApi.Models.Authorization;
 
@@ -63,6 +64,52 @@ namespace StudentApi.Controllers
             return response;
         }
 
+        //[Authorize]
+        [HttpPost("/api/addstudent")]
+        public async Task<IActionResult> AddStudentAsync()
+        {
+            UserInfo model;
+            UserInfo user;
+            string body;
+            IActionResult response = BadRequest(new { general = "Brak wymaganych danyh" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            try
+            {
+                model = JsonConvert.DeserializeObject<UserInfo>(body);
+            }
+            catch (Exception)
+            {
+                return response;
+            }
+
+
+            //{
+            //    "albumnumber": "74800",
+	           // "emailaddress": "test@test.pl",
+	           // "firstname": "Marcin",
+	           // "lastname": "Klupa"
+            //}
+
+
+
+            if (model != null)
+            {
+                user = await authorizationService.AuthenticateUser(model);
+                if (user != null)
+                {
+                    var tokenStr = GenerateJsonWebToken(user);
+                    response = Ok(new { token = tokenStr });
+                }
+            }
+
+            return response;
+        }
+
+
 
         private string GenerateJsonWebToken(UserInfo userinfo)
         {
@@ -74,9 +121,11 @@ namespace StudentApi.Controllers
                 new Claim(JwtRegisteredClaimNames.UniqueName, userinfo.AlbumNumber),
                 new Claim(JwtRegisteredClaimNames.GivenName, userinfo.FirstName),
                 new Claim(JwtRegisteredClaimNames.FamilyName, userinfo.LastName),
+                new Claim(JwtRegisteredClaimNames.Acr, userinfo.Initials),
                 new Claim(JwtRegisteredClaimNames.Email, userinfo.EmailAddress),
+                new Claim(JwtRegisteredClaimNames.Typ, userinfo.Role),
                 new Claim(JwtRegisteredClaimNames.Iat, userinfo.IsRegistered.ToString()),
-                new Claim(JwtRegisteredClaimNames.Iss, userinfo.IsBlocked.ToString()),
+                new Claim(JwtRegisteredClaimNames.Prn, userinfo.IsBlocked.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
