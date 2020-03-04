@@ -37,7 +37,7 @@ namespace StudentApi.Controllers
             UserInfo model;
             UserInfo user;
             string body;
-            IActionResult response = Unauthorized(new { general = "Nieprawidłowe dane logowania" });
+            IActionResult response = BadRequest(new { general = "Nieprawidłowe dane logowania" });
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 body = await reader.ReadToEndAsync();
@@ -57,8 +57,14 @@ namespace StudentApi.Controllers
                 user = await authorizationService.AuthenticateUser(model);
                 if (user != null)
                 {
-                    var tokenStr = GenerateJsonWebToken(user);
-                    response = Ok(new { token = tokenStr });
+                    if (user.IsBlocked)
+                        response = BadRequest(new { general = "Konto użytkownika zostało zablokowane" });
+                    else
+                    {
+                        var tokenStr = GenerateJsonWebToken(user);
+                        response = Ok(new { token = tokenStr });
+                    }
+                    
                 }
             }
                 
