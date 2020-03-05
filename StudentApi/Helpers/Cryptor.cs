@@ -47,5 +47,61 @@ namespace StudentApi.Helpers
             string cipherText = Convert.ToBase64String(cipherTextBytes);
             return cipherText;
         }
+
+        public static string Decrypt(string cipherText)
+        {
+            string passPhrase = "Borelioza1973";
+            string saltValue = "@an025613DY6766#";
+            string hashAlgorithm = "SHA1";
+            int passwordIterations = 2;
+            string initVector = "@1C2ch7275FnccH8";
+            int keySize = 256;
+            byte[] initVectorBytes = Encoding.ASCII.GetBytes(initVector);
+            byte[] saltValueBytes = Encoding.ASCII.GetBytes(saltValue);
+            string plainText = string.Empty;
+
+            try
+            {
+                byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+                PasswordDeriveBytes password = new PasswordDeriveBytes(
+                                                                passPhrase,
+                                                                saltValueBytes,
+                                                                hashAlgorithm,
+                                                                passwordIterations);
+
+                byte[] keyBytes = password.GetBytes(keySize / 8);
+                RijndaelManaged symmetricKey = new RijndaelManaged();
+                symmetricKey.Mode = CipherMode.CBC;
+
+                ICryptoTransform decryptor = symmetricKey.CreateDecryptor(
+                                                                 keyBytes,
+                                                                 initVectorBytes);
+
+                MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
+                CryptoStream cryptoStream = new CryptoStream(memoryStream,
+                                                              decryptor,
+                                                              CryptoStreamMode.Read);
+
+
+                byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+                int decryptedByteCount = cryptoStream.Read(plainTextBytes,
+                                                       0,
+                                                       plainTextBytes.Length);
+
+                memoryStream.Close();
+                if (decryptedByteCount > 0)
+                { cryptoStream.Close(); }
+
+                plainText = Encoding.UTF8.GetString(plainTextBytes,
+                                                           0,
+                                                           decryptedByteCount);
+            }
+            catch (Exception)
+            {
+                plainText = "0";
+            }
+  
+            return plainText;
+        }
     }
 }

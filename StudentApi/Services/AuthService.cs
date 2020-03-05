@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using StudentApi.Models;
 
 namespace StudentApi.Services
 {
@@ -18,7 +19,33 @@ namespace StudentApi.Services
         public AuthService(SanStudentContext ctx)
         {
             context = ctx;
-        }                                                                  
+        }
+
+        public async Task<AdminInfo> AuthenticateAdmin(AdminInfo info)
+        {
+            string cryptedPass = Cryptor.Encrypt(info.Password);
+            var user = await context.Users.Where(u => u.AlbumNumber == info.Username && u.Password == cryptedPass && u.Role == "Admin").FirstOrDefaultAsync();
+            if (user != null)
+            {
+                return new AdminInfo
+                {
+                    Id = user.Id,
+                    Username = user.AlbumNumber,
+                    Password = user.Password,
+                    EmailAddress = user.EmailAddress,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Role = user.Role,
+                    IsRegistered = user.IsRegistered,
+                    IsBlocked = user.IsBlocked,
+                    Initials = user.Initials
+                };
+            }
+            else
+                return null;
+            
+        }
+
         public async Task<UserInfo> AuthenticateUser(UserInfo info)
         {
             string cryptedPass = Cryptor.Encrypt(info.Password);

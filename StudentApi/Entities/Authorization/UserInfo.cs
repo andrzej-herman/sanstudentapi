@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentApi.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,11 +19,30 @@ namespace StudentApi.Entities.Authorization
         public string Role { get; set; }
         public bool IsRegistered { get; set; }
         public bool IsBlocked { get; set; }
-
+        public DateTime? DateCreated { get; set; }
+        public DateTime? DateRegistered { get; set; }
+        public DateTime? DateBlocked { get; set; }
 
         public string Initials
         {
-            get { return FirstName.Substring(0, 1).ToUpper() + LastName.Substring(0, 1).ToUpper(); }         
+            get 
+            {
+                if (FirstName != null && LastName != null)
+                    return FirstName.Substring(0, 1).ToUpper() + LastName.Substring(0, 1).ToUpper();
+                else
+                    return "";
+            }         
+        }
+
+        public string DisplayPassword
+        {
+            get
+            {
+                if (IsRegistered)
+                    return "**********";
+                else
+                    return Cryptor.Decrypt(Password);
+            }
         }
 
     }
