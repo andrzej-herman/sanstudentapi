@@ -1,4 +1,5 @@
 ﻿using StudentApi.Entities.MainPage;
+using StudentApi.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,8 @@ namespace StudentApi.Interfaces
     public interface IMainPageService
     {
         Task<List<BasicInfoItem>> GetMainPageInfo();
+
+        Task<OperationResult> UpdateMainPageInfo(List<BasicInfoItem> updatedList);
+
     }
 }

@@ -70,6 +70,10 @@ namespace StudentApi.Controllers
             return JsonConvert.SerializeObject(data);
         }
 
+
+
+
+
         #endregion
 
     }
