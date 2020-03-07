@@ -35,13 +35,14 @@ namespace StudentApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDistributedMemoryCache();
-            //services.AddSession(options =>
-            //{
-            //    options.IdleTimeout = TimeSpan.FromMinutes(1);
-            //});
 
-            services.AddCors(options =>
+        //services.AddDistributedMemoryCache();
+        //services.AddSession(options =>
+        //{
+        //    options.IdleTimeout = TimeSpan.FromMinutes(1);
+        //});
+
+        services.AddCors(options =>
             {
                 options.AddPolicy(CorsOrigins,
                     builder =>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudentApi.Entities.Authorization;
+using StudentApi.Entities.Data;
 using StudentApi.Helpers;
 using StudentApi.Interfaces;
 using StudentApi.Models;
@@ -82,6 +83,58 @@ namespace StudentApi.Services
             }
         }
 
+        public async Task<OperationResult> AddGroup(GroupInfo group)
+        {
+            OperationResult result = new OperationResult();
+
+            // Check proper data
+            if (!ValidateGroupData(group, out string error))
+            {
+                result.Result = false;
+                result.Error = error;
+                return result;
+            }
+
+            // Check existing data
+            var checkName = await context.Groups.Where(u => u.Name.ToLower() == group.Name.Trim().ToLower() && u.Subject.ToLower() == group.Subject.ToLower()).FirstOrDefaultAsync();
+            if (checkName != null)
+            {
+                result.Result = false;
+                result.Error = "Podana nazwa grupy już istnieje";
+                return result;
+            }
+
+            // Check Time
+            var checkTime = await context.Groups.Where(u => u.Year == group.Year.Trim() && u.Semester == group.Semester && u.Day == group.Day && u.Time == group.Time).FirstOrDefaultAsync();
+            if (checkTime != null)
+            {
+                result.Result = false;
+                result.Error = "Dzień i godzina są zajęte dla innej grupy";
+                return result;
+            }
+
+
+            group.Id = Guid.NewGuid().ToString();
+            group.DateCreated = DateTime.Now;
+            group.IsActive = true;
+
+            try
+            {
+                await context.Groups.AddAsync(group);
+                await context.SaveChangesAsync();
+                result.Result = true;
+                result.Error = null;
+                result.Content = "Grupa studencka została utworzona";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Result = false;
+                result.Error = ex.ToString();
+                return result;
+            }
+        }
+
         public async Task<List<Student>> GetAllStudents()
         {
             List<Student> res = new List<Student>();
@@ -107,6 +160,37 @@ namespace StudentApi.Services
 
             return res.OrderBy(s => s.LastName).ToList();
         }
+
+        public async Task<List<StudentGroup>> GetAllGroups()
+        {
+            List<StudentGroup> groups = new List<StudentGroup>();
+            List<Student> students = await GetAllStudents();
+            var groupsInfos = await context.Groups.ToListAsync();
+            var ordered = groupsInfos.OrderBy(gi => gi.Day).ThenBy(gi => gi.Time).ToList();
+            foreach (var g in ordered)
+            {
+                var ids = await context.Relation_StudentGroup.Where(r => r.GroupId == g.Id).Select(r => r.StudentId).ToListAsync();
+                var ownedStudents = students.Where(s => ids.Contains(s.Id)).ToList();
+                string season = g.Semester == Semester.SUMMER ? "letni" : "zimowy";
+                string day = g.Day == Day.SATURDAY ? "sobota" : "niedziela";
+                string lectureDay = g.LectureDay == Day.SATURDAY ? "sobota" : "niedziela";
+                groups.Add(
+                   new StudentGroup
+                   {
+                       Id = g.Id,
+                       Season = $"{g.Year} {season}",
+                       Name = $"{g.Subject} ({g.Name})",
+                       Time = $"{day} ({g.Time})",
+                       Lecture = $"{g.LecturerName} ({lectureDay}, {g.LectureTime})",
+                       Students = ownedStudents,
+                       DateCreated = g.DateCreated,
+                       IsActive = g.IsActive,
+                   });
+            }
+
+            return groups;
+        } 
+
 
         private bool ValidateStudentData(string albumNumber, string email, string firstName, string lastName, out string error)
         {
@@ -187,6 +271,27 @@ namespace StudentApi.Services
                 }
             }
             return checkResult;
+        }
+
+        private bool ValidateGroupData(GroupInfo group, out string error)
+        {
+            error = "Nieprawidłowy rok akademicki";
+            bool res = false;
+
+            if (group.Year.Length == 9)
+            {
+               if (group.Year.Substring(4, 1) == "/")
+                {
+                    string[] data = group.Year.Split("/");
+                    if (IsNumeric(data[0]) && IsNumeric(data[1]))
+                    {
+                        res = true;
+                        error = string.Empty;
+                    }
+                }
+            }
+
+            return res;
         }
 
         

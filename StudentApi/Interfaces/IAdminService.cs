@@ -1,4 +1,5 @@
 ﻿using StudentApi.Entities.Authorization;
+using StudentApi.Entities.Data;
 using StudentApi.Helpers;
 using StudentApi.Models;
 using System;
@@ -13,5 +14,9 @@ namespace StudentApi.Interfaces
         Task <OperationResult>AddStudent(string albumNumber, string email, string firstName, string lastName);
 
         Task<List<Student>> GetAllStudents();
+
+        Task<OperationResult> AddGroup(GroupInfo group);
+
+        Task<List<StudentGroup>> GetAllGroups();
     }
 }

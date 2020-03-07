@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using StudentApi.Entities.Authorization;
+using StudentApi.Entities.Data;
 using StudentApi.Interfaces;
 
 namespace StudentApi.Controllers
@@ -71,7 +72,47 @@ namespace StudentApi.Controllers
         }
 
 
+        //[Authorize]
+        //[HttpPost("/api/addgroup")]
+        //public async Task<IActionResult> AddGroupAsync()
+        //{
+        //    GroupInfo user;
+        //    string body;
+        //    IActionResult response = BadRequest(new { general = "Brak wymaganych danych" });
+        //    using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+        //    {
+        //        body = await reader.ReadToEndAsync();
+        //    }
 
+        //    try
+        //    {
+        //        user = JsonConvert.DeserializeObject<UserInfo>(body);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return response;
+        //    }
+
+        //    if (user != null)
+        //    {
+        //        var result = await adminService.AddStudent(user.AlbumNumber, user.EmailAddress, user.FirstName, user.LastName);
+        //        if (!result.Result)
+        //            response = BadRequest(new { general = result.Error });
+        //        else
+        //            response = Ok(new { email = user.EmailAddress, temporaryPassword = result.Content });
+        //    }
+
+        //    return response;
+        //}
+
+
+        [Authorize]
+        [HttpGet("/api/groups")]
+        public async Task<string> GetAllGroups()
+        {
+            var data = await adminService.GetAllGroups();
+            return JsonConvert.SerializeObject(data);
+        }
 
 
         #endregion

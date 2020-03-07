@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentApi;
 
 namespace StudentApi.Migrations
 {
     [DbContext(typeof(SanStudentContext))]
-    partial class SanStudentContextModelSnapshot : ModelSnapshot
+    [Migration("20200307084842_AddStudentGroups")]
+    partial class AddStudentGroups
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,9 +85,6 @@ namespace StudentApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LecturerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Semester")
