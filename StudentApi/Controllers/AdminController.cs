@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using StudentApi.Entities.Authorization;
 using StudentApi.Entities.Data;
 using StudentApi.Interfaces;
+using StudentApi.Models;
 
 namespace StudentApi.Controllers
 {
@@ -35,6 +36,7 @@ namespace StudentApi.Controllers
         public async Task<IActionResult> AddStudentAsync()
         {
             UserInfo user;
+            Obj_Groups objgroups;
             string body;
             IActionResult response = BadRequest(new { general = "Brak wymaganych danych" });
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
@@ -45,15 +47,16 @@ namespace StudentApi.Controllers
             try
             {
                 user = JsonConvert.DeserializeObject<UserInfo>(body);
+                objgroups = JsonConvert.DeserializeObject<Obj_Groups>(body);
             }
             catch (Exception)
             {
                 return response;
             }
 
-            if (user != null)
+            if (user != null && objgroups != null)
             {
-                var result = await adminService.AddStudent(user.AlbumNumber, user.EmailAddress, user.FirstName, user.LastName);
+                var result = await adminService.AddStudent(user.AlbumNumber, user.EmailAddress, user.FirstName, user.LastName, objgroups.groups);
                 if (!result.Result)
                     response = BadRequest(new { general = result.Error });
                 else
@@ -72,38 +75,38 @@ namespace StudentApi.Controllers
         }
 
 
-        //[Authorize]
-        //[HttpPost("/api/addgroup")]
-        //public async Task<IActionResult> AddGroupAsync()
-        //{
-        //    GroupInfo user;
-        //    string body;
-        //    IActionResult response = BadRequest(new { general = "Brak wymaganych danych" });
-        //    using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
-        //    {
-        //        body = await reader.ReadToEndAsync();
-        //    }
+        [Authorize]
+        [HttpPost("/api/addgroup")]
+        public async Task<IActionResult> AddGroupAsync()
+        {
+            GroupInfo info;
+            string body;
+            IActionResult response = BadRequest(new { general = "Brak wymaganych danych" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                body = await reader.ReadToEndAsync();
+            }
 
-        //    try
-        //    {
-        //        user = JsonConvert.DeserializeObject<UserInfo>(body);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return response;
-        //    }
+            try
+            {
+                info = JsonConvert.DeserializeObject<GroupInfo>(body);
+            }
+            catch (Exception)
+            {
+                return response;
+            }
 
-        //    if (user != null)
-        //    {
-        //        var result = await adminService.AddStudent(user.AlbumNumber, user.EmailAddress, user.FirstName, user.LastName);
-        //        if (!result.Result)
-        //            response = BadRequest(new { general = result.Error });
-        //        else
-        //            response = Ok(new { email = user.EmailAddress, temporaryPassword = result.Content });
-        //    }
+            if (info != null)
+            {
+                var result = await adminService.AddGroup(info);                                                                      
+                if (!result.Result)
+                    response = BadRequest(new { general = result.Error });
+                else
+                    response = Ok(new { general = result.Content });
+            }
 
-        //    return response;
-        //}
+            return response;
+        }
 
 
         [Authorize]

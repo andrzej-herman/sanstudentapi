@@ -20,7 +20,7 @@ namespace StudentApi.Services
             context = ctx;
         }
 
-        public async Task<OperationResult> AddStudent(string albumNumber, string email, string firstName, string lastName)
+        public async Task<OperationResult> AddStudent(string albumNumber, string email, string firstName, string lastName, List<string> groups)
         {
             OperationResult result = new OperationResult();
             string returnedPassword = RandomPassword.GenerateTemporaryPassword();
@@ -69,6 +69,14 @@ namespace StudentApi.Services
             try
             {
                 await context.Users.AddAsync(user);
+                foreach (var item in groups)
+                {
+                    if (!string.IsNullOrEmpty(item.Trim()))
+                    {
+                        await context.Relation_StudentGroup.AddAsync(new RelStudentGroup() { GroupId = item, StudentId = user.Id });
+                    }
+                }
+
                 await context.SaveChangesAsync();
                 result.Result = true;
                 result.Error = null;

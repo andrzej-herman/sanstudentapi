@@ -11,7 +11,7 @@ namespace StudentApi.Interfaces
 {
     public interface IAdminService
     {
-        Task <OperationResult>AddStudent(string albumNumber, string email, string firstName, string lastName);
+        Task <OperationResult>AddStudent(string albumNumber, string email, string firstName, string lastName, List<string> groups);
 
         Task<List<Student>> GetAllStudents();
 
