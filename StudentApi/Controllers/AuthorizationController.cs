@@ -50,6 +50,12 @@ namespace StudentApi.Controllers
             try
             {
                 model = JsonConvert.DeserializeObject<UserInfo>(body);
+                string data = model.AlbumNumber;
+                if (!RandomPassword.IsNumeric(data))
+                {
+                    model.AlbumNumber = null;
+                    model.Login = data;
+                }
             }
             catch (Exception)
             {

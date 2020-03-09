@@ -49,7 +49,10 @@ namespace StudentApi.Services
         public async Task<UserInfo> AuthenticateUser(UserInfo info)
         {
             string cryptedPass = Cryptor.Encrypt(info.Password);
-            return await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
+            if (info.AlbumNumber != null)
+                return await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
+            else
+                return await context.Users.Where(u => u.Login == info.Login && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
         }
 
         public async Task<string> GetUserPassword(string userId)

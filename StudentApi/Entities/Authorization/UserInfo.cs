@@ -22,6 +22,8 @@ namespace StudentApi.Entities.Authorization
         public DateTime? DateCreated { get; set; }
         public DateTime? DateRegistered { get; set; }
         public DateTime? DateBlocked { get; set; }
+        public string Login { get; set; }
+        public string GitHubLogin { get; set; }
 
         public string Initials
         {

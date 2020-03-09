@@ -217,7 +217,7 @@ namespace StudentApi.Services
                 return false;
             }
 
-            if (!IsNumeric(albumNumber))
+            if (!RandomPassword.IsNumeric(albumNumber))
             {
                 error = "Nieprawidłowy numer albumu";
                 return false;
@@ -266,20 +266,7 @@ namespace StudentApi.Services
             }
         }
 
-        private bool IsNumeric(string value)
-        {
-            bool checkResult = true;
-
-            for (int i = 0; i < value.Length; i++)
-            {
-                if (!char.IsDigit(value, i))
-                {
-                    checkResult = false;
-                    break;
-                }
-            }
-            return checkResult;
-        }
+       
 
         private bool ValidateGroupData(GroupInfo group, out string error)
         {
@@ -291,7 +278,7 @@ namespace StudentApi.Services
                if (group.Year.Substring(4, 1) == "/")
                 {
                     string[] data = group.Year.Split("/");
-                    if (IsNumeric(data[0]) && IsNumeric(data[1]))
+                    if (RandomPassword.IsNumeric(data[0]) && RandomPassword.IsNumeric(data[1]))
                     {
                         res = true;
                         error = string.Empty;
