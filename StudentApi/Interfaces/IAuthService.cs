@@ -14,5 +14,8 @@ namespace StudentApi.Interfaces
         Task<AdminInfo> AuthenticateAdmin(AdminInfo info);
 
         Task<string> GetUserPassword(string userId);
+        Task<string> GetUserLogin(string userId);
+        Task<string> GetUserGitHubLogin(string userId);
+
     }
 }

@@ -162,7 +162,9 @@ namespace StudentApi.Services
                         IsBlocked = user.IsBlocked,
                         DateCreated = user.DateCreated.Value,
                         DateRegistered = user.DateRegistered,
-                        DateBlocked = user.DateBlocked
+                        DateBlocked = user.DateBlocked,
+                        Login = user.Login,
+                        GitHubLogin = user.GitHubLogin
                     });
             }
 

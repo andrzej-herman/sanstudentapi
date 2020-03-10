@@ -18,5 +18,19 @@ namespace StudentApi.Models
         public DateTime DateCreated { get; set; }
         public DateTime? DateRegistered { get; set; }
         public DateTime? DateBlocked { get; set; }
+        public string Login { get; set; }
+        public string GitHubLogin { get; set; }
+
+        public string GitHub
+        {
+            get
+            {
+                if (GitHubLogin == null)
+                    return null;
+                else
+                    return @"https://github.com/" + GitHubLogin;
+            }
+        }
+
     }
 }

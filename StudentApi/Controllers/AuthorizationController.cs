@@ -135,6 +135,8 @@ namespace StudentApi.Controllers
             };
 
             user.Password = await authorizationService.GetUserPassword(user.Id);
+            user.Login = await authorizationService.GetUserLogin(user.Id);
+            user.GitHubLogin = await authorizationService.GetUserGitHubLogin(user.Id);
             // Get other values from Db (groups, absence, marks etc ...)
 
             return JsonConvert.SerializeObject(user);

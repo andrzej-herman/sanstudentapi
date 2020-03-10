@@ -17,6 +17,18 @@ namespace StudentApi.Models
         public bool IsRegistered { get; set; }
         public bool IsBlocked { get; set; }
         public string Initials { get; set; }
+        public string Login { get; set; }
+        public string GitHubLogin { get; set; }
 
+        public string GitHub
+        {
+            get
+            {
+                if (GitHubLogin == null)
+                    return null;
+                else
+                    return @"https://github.com/" + GitHubLogin;
+            }
+        }
     }
 }

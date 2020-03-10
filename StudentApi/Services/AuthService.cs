@@ -60,5 +60,17 @@ namespace StudentApi.Services
             var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
             return user.Password;
         }
+
+        public async Task<string> GetUserLogin(string userId)
+        {
+            var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+            return user.Login;
+        }
+
+        public async Task<string> GetUserGitHubLogin(string userId)
+        {
+            var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+            return user.GitHubLogin;
+        }
     }
 }
