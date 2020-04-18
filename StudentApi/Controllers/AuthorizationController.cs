@@ -87,7 +87,7 @@ namespace StudentApi.Controllers
             AdminInfo model;
             AdminInfo admin;
             string body;
-            IActionResult response = BadRequest(new { general = "Nieprawidłowe dane logowania" });
+            IActionResult response = BadRequest(new { text = "Nieprawidłowa nazwa użytkownika" });
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 body = await reader.ReadToEndAsync();
@@ -105,11 +105,19 @@ namespace StudentApi.Controllers
             if (model != null)
             {
                 admin = await authorizationService.AuthenticateAdmin(model);
-                if (admin != null)
+                if (admin.LoginResult)
                 {
                     var tokenStr = GenerateAdminJsonWebToken(admin);
                     response = Ok(new { token = tokenStr });
                 }
+                else
+                {
+                    if (admin.ErrorUsername != null)
+                        response = BadRequest(new { text = admin.ErrorUsername });
+                    else if (admin.ErrorPassword != null)
+                        response = BadRequest(new { text = admin.ErrorPassword });
+                }
+                
             }
 
             return response;

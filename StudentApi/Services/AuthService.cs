@@ -24,11 +24,23 @@ namespace StudentApi.Services
         public async Task<AdminInfo> AuthenticateAdmin(AdminInfo info)
         {
             string cryptedPass = Cryptor.Encrypt(info.Password);
+            var checkUser = await context.Users.Where(u => u.AlbumNumber == info.Username && u.Role == "Admin").FirstOrDefaultAsync();
+            if (checkUser == null)
+            {
+                return new AdminInfo
+                {
+                    LoginResult = false,
+                    ErrorUsername = "Nieprawidłowa nazwa użytkownika",
+                    ErrorPassword = null,
+                };
+            }
+
             var user = await context.Users.Where(u => u.AlbumNumber == info.Username && u.Password == cryptedPass && u.Role == "Admin").FirstOrDefaultAsync();
             if (user != null)
             {
                 return new AdminInfo
                 {
+                    LoginResult = true,
                     Id = user.Id,
                     Username = user.AlbumNumber,
                     Password = user.Password,
@@ -38,11 +50,18 @@ namespace StudentApi.Services
                     Role = user.Role,
                     IsRegistered = user.IsRegistered,
                     IsBlocked = user.IsBlocked,
-                    Initials = user.Initials
+                    Initials = user.Initials,
+                    ErrorUsername = null,
+                    ErrorPassword = null
                 };
             }
             else
-                return null;
+                return new AdminInfo
+                {
+                    LoginResult = false,
+                    ErrorPassword = "Nieprawidłowe hasło",
+                    ErrorUsername = null
+                };
             
         }
 
