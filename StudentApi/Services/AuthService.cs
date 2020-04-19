@@ -30,7 +30,7 @@ namespace StudentApi.Services
                 return new AdminInfo
                 {
                     LoginResult = false,
-                    ErrorUsername = "Nieprawidłowa nazwa użytkownika",
+                    ErrorUsername = "Użytkownik nie istnieje w systemie",
                     ErrorPassword = null,
                 };
             }

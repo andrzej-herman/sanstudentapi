@@ -87,7 +87,7 @@ namespace StudentApi.Controllers
             AdminInfo model;
             AdminInfo admin;
             string body;
-            IActionResult response = BadRequest(new { text = "Nieprawidłowa nazwa użytkownika" });
+            IActionResult response = BadRequest(new { username = "Błąd połączenia z API", password = "Błąd połączenia z API" });
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 body = await reader.ReadToEndAsync();
@@ -112,10 +112,7 @@ namespace StudentApi.Controllers
                 }
                 else
                 {
-                    if (admin.ErrorUsername != null)
-                        response = BadRequest(new { text = admin.ErrorUsername });
-                    else if (admin.ErrorPassword != null)
-                        response = BadRequest(new { text = admin.ErrorPassword });
+                    response = BadRequest(new { username = admin.ErrorUsername, password = admin.ErrorPassword });
                 }
                 
             }

@@ -39,7 +39,7 @@ namespace StudentApi.Services
                 await context.SaveChangesAsync();
                 result.Result = true;
                 result.Error = null;
-                result.Content = "Informacje zostały zaktualizowane";
+                result.Content = "Informacje na stronie głównej zostały zaktualizowane";
                 return result;
             }
             catch (Exception ex)

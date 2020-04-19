@@ -34,7 +34,7 @@ namespace StudentApi.Controllers
         [HttpPost("/api/updatemainpageinfo")]
         public async Task<IActionResult> UpdateMainPageInfo()
         {
-            IActionResult response = BadRequest(new { general = "Wystąpił błąd podczas aktualizacji danych" });
+            IActionResult response = BadRequest(new { error = "Wystąpił błąd podczas aktualizacji danych" });
             List<BasicInfoItem> data;
             string body;
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
@@ -60,9 +60,9 @@ namespace StudentApi.Controllers
             {
                 var result = await mainPageService.UpdateMainPageInfo(data);
                 if (!result.Result)
-                    response = BadRequest(new { general = result.Error });
+                    response = BadRequest(new { error = result.Error });
                 else
-                    response = Ok(new { general = result.Content });
+                    response = Ok(new { text = result.Content });
             }
 
             return response;         
