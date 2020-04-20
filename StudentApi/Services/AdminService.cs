@@ -117,7 +117,7 @@ namespace StudentApi.Services
             if (checkTime != null)
             {
                 result.Result = false;
-                result.Error = "Dzień i godzina są zajęte dla innej grupy";
+                result.Error = "Dzień i godzina są już zajęte dla innej grupy";
                 return result;
             }
 
@@ -132,7 +132,7 @@ namespace StudentApi.Services
                 await context.SaveChangesAsync();
                 result.Result = true;
                 result.Error = null;
-                result.Content = "Grupa studencka została utworzona";
+                result.Content = "Grupa studencka została pomyślnie utworzona";
                 return result;
             }
             catch (Exception ex)

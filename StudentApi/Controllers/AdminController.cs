@@ -81,7 +81,7 @@ namespace StudentApi.Controllers
         {
             GroupInfo info;
             string body;
-            IActionResult response = BadRequest(new { general = "Brak wymaganych danych" });
+            IActionResult response = BadRequest(new { error = "Wystąpił błąd podczas aktualizacji danych grup" });
             using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
                 body = await reader.ReadToEndAsync();
@@ -100,9 +100,9 @@ namespace StudentApi.Controllers
             {
                 var result = await adminService.AddGroup(info);                                                                      
                 if (!result.Result)
-                    response = BadRequest(new { general = result.Error });
+                    response = BadRequest(new { error = result.Error });
                 else
-                    response = Ok(new { general = result.Content });
+                    response = Ok(new { text = result.Content });
             }
 
             return response;
