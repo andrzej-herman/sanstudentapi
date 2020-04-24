@@ -33,7 +33,7 @@ namespace StudentApi.Controllers
         }
         #endregion
 
-        #region Endpoints
+        #region Admin
 
         [HttpPost("/api/login")]
         public async Task<IActionResult> LoginAsync()

@@ -29,7 +29,7 @@ namespace StudentApi.Controllers
         #endregion
 
 
-        #region Endpoints
+        #region Students
 
         [Authorize]
         [HttpPost("/api/addstudent")]
@@ -60,7 +60,7 @@ namespace StudentApi.Controllers
                 if (!result.Result)
                     response = BadRequest(new { general = result.Error });
                 else
-                    response = Ok(new { email =  user.EmailAddress, temporaryPassword  = result.Content });
+                    response = Ok(new { email = user.EmailAddress, temporaryPassword = result.Content });
             }
 
             return response;
@@ -73,8 +73,10 @@ namespace StudentApi.Controllers
             var data = await adminService.GetAllStudents();
             return JsonConvert.SerializeObject(data);
         }
+        #endregion
 
 
+        #region Groups
         [Authorize]
         [HttpPost("/api/addgroup")]
         public async Task<IActionResult> AddGroupAsync()
@@ -98,7 +100,7 @@ namespace StudentApi.Controllers
 
             if (info != null)
             {
-                var result = await adminService.AddGroup(info);                                                                      
+                var result = await adminService.AddGroup(info);
                 if (!result.Result)
                     response = BadRequest(new { error = result.Error });
                 else
@@ -117,8 +119,34 @@ namespace StudentApi.Controllers
             return JsonConvert.SerializeObject(data);
         }
 
+        [Authorize]
+        [HttpPost("/api/changegroupstatus")]
+        public async Task<IActionResult> ChangeGroupStatus()
+        {
+            string body;
+            IActionResult response = BadRequest(new { error = "Wystąpił błąd podczas aktualizacji danych grupy" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            if (body == null)
+                return response;
+
+            var result = await adminService.ChangeGroupStatus(body);
+            if (!result.Result)
+                response = BadRequest(new { error = result.Error });
+            else
+                response = Ok(new { text = result.Content });
+
+
+            return response;
+        }
 
         #endregion
+
+
+
 
     }
 }

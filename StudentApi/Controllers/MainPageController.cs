@@ -16,20 +16,24 @@ namespace StudentApi.Controllers
     [ApiController]
     public class MainPageController : ControllerBase
     {
+        #region #region Properties & Constructor
         private readonly IMainPageService mainPageService;
 
         public MainPageController(IMainPageService mpsrv)
         {
             mainPageService = mpsrv;
         }
+        #endregion
 
+
+        #region Main Page Info
         [HttpGet("/api/mainpageinfo")]
         public async Task<string> GetMainPageInfo()
         {
             var data = await mainPageService.GetMainPageInfo();
             return JsonConvert.SerializeObject(data);
         }
-        
+
         [Authorize]
         [HttpPost("/api/updatemainpageinfo")]
         public async Task<IActionResult> UpdateMainPageInfo()
@@ -50,7 +54,7 @@ namespace StudentApi.Controllers
                     if (string.IsNullOrEmpty(item.Content.Trim()))
                         item.Content = null;
                 }
-            }                                                                           
+            }
             catch (Exception)
             {
                 return response;
@@ -65,8 +69,9 @@ namespace StudentApi.Controllers
                     response = Ok(new { text = result.Content });
             }
 
-            return response;         
-        }
+            return response;
+        } 
+        #endregion
 
     }
 }

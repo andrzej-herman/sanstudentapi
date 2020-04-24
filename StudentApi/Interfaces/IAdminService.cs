@@ -18,5 +18,7 @@ namespace StudentApi.Interfaces
         Task<OperationResult> AddGroup(GroupInfo group);
 
         Task<List<StudentGroup>> GetAllGroups();
+
+        Task<OperationResult> ChangeGroupStatus(string id);
     }
 }

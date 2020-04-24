@@ -143,6 +143,30 @@ namespace StudentApi.Services
             }
         }
 
+
+        public async Task<OperationResult> ChangeGroupStatus(string id)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var group = context.Groups.FirstOrDefault(g => g.Id == id);
+                var currentStatus = group.IsActive;
+                group.IsActive = !currentStatus;
+                await context.SaveChangesAsync();
+                result.Result = true;
+                result.Error = null;
+                result.Content = "Status grupy został zaktualizowany";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Result = false;
+                result.Error = ex.ToString();
+                result.Content = null;
+                return result;
+            }
+        }
+
         public async Task<List<Student>> GetAllStudents()
         {
             List<Student> res = new List<Student>();
