@@ -85,7 +85,6 @@ namespace StudentApi
             services.AddScoped<IMainPageService, MainPageService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAdminService, AdminService>();
-
             services.AddMvc();
         }
 

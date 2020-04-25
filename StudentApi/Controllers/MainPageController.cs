@@ -19,6 +19,7 @@ namespace StudentApi.Controllers
     {
         #region #region Properties & Constructor
         private readonly IMainPageService mainPageService;
+        
 
         public MainPageController(IMainPageService mpsrv)
         {
@@ -31,6 +32,8 @@ namespace StudentApi.Controllers
         [HttpGet("/api/mainpageinfo")]
         public async Task<string> GetMainPageInfo()
         {
+
+
             var data = await mainPageService.GetMainPageInfo();
             return JsonConvert.SerializeObject(data);
         }

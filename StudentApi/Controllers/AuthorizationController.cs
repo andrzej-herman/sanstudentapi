@@ -35,6 +35,66 @@ namespace StudentApi.Controllers
 
         #region Admin
 
+        [HttpPost("/api/adminlogin")]
+        public async Task<IActionResult> AdminLoginAsync()
+        {
+            AdminInfo model;
+            AdminInfo admin;
+            string body;
+            IActionResult response = BadRequest(new { username = "Błąd połączenia z API", password = "Błąd połączenia z API" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            try
+            {
+                model = JsonConvert.DeserializeObject<AdminInfo>(body);
+            }
+            catch (Exception)
+            {
+                return response;
+            }
+
+            if (model != null)
+            {
+                admin = await authorizationService.AuthenticateAdmin(model);
+                if (admin.LoginResult)
+                {
+                    var tokenStr = GenerateAdminJsonWebToken(admin);
+                    response = Ok(new { token = tokenStr });
+                }
+                else
+                {
+                    response = BadRequest(new { username = admin.ErrorUsername, password = admin.ErrorPassword });
+                }
+                
+            }
+
+            return response;
+        }
+
+        [Authorize]
+        [HttpGet("/api/getadmin")]
+        public async Task<string> GetAdmin()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            IList<Claim> claim = identity.Claims.ToList();
+            string id = claim[0].Value;
+            AdminModel admin = new AdminModel
+            {
+                DisplayName = "Andrzej Herman",
+                Initials = "AH"
+            };
+
+            admin.Password = await authorizationService.GetUserPassword(id);
+            return JsonConvert.SerializeObject(admin);
+        }
+
+        #endregion
+
+        #region Student
+
         [HttpPost("/api/login")]
         public async Task<IActionResult> LoginAsync()
         {
@@ -79,45 +139,6 @@ namespace StudentApi.Controllers
             return response;
         }
 
-        [HttpPost("/api/adminlogin")]
-        public async Task<IActionResult> AdminLoginAsync()
-        {
-            AdminInfo model;
-            AdminInfo admin;
-            string body;
-            IActionResult response = BadRequest(new { username = "Błąd połączenia z API", password = "Błąd połączenia z API" });
-            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
-            {
-                body = await reader.ReadToEndAsync();
-            }
-
-            try
-            {
-                model = JsonConvert.DeserializeObject<AdminInfo>(body);
-            }
-            catch (Exception)
-            {
-                return response;
-            }
-
-            if (model != null)
-            {
-                admin = await authorizationService.AuthenticateAdmin(model);
-                if (admin.LoginResult)
-                {
-                    var tokenStr = GenerateAdminJsonWebToken(admin);
-                    response = Ok(new { token = tokenStr });
-                }
-                else
-                {
-                    response = BadRequest(new { username = admin.ErrorUsername, password = admin.ErrorPassword });
-                }
-                
-            }
-
-            return response;
-        }
-
         [Authorize]
         [HttpGet("/api/getuser")]
         public async Task<string> GetCurrentUser()
@@ -146,21 +167,58 @@ namespace StudentApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("/api/getadmin")]
-        public async Task<string> GetAdmin()
+        [HttpPost("/api/resetpassword")]
+        public async Task<IActionResult> ResetUserPassword()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            IList<Claim> claim = identity.Claims.ToList();
-            string id = claim[0].Value;
-            AdminModel admin = new AdminModel
+            UserInfo model;
+            string body;
+            IActionResult response = BadRequest(new { error = "Błąd połączenia z API" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
             {
-                DisplayName = "Andrzej Herman",
-                Initials = "AH"
-            };
+                body = await reader.ReadToEndAsync();
+            }
 
-            admin.Password = await authorizationService.GetUserPassword(id);
-            return JsonConvert.SerializeObject(admin);
-        } 
+            try
+            {
+                model = JsonConvert.DeserializeObject<UserInfo>(body);
+            }
+            catch (Exception)
+            {
+                return response;
+            }
+
+            if (model != null)
+            {
+                string apiKey = configuration["SendGrid:Key"];
+                var result = await authorizationService.ResetUserPassword(model, apiKey);
+                if (result.Result)
+                {
+                    response = Ok(new { content = result.Content });
+                }
+                else
+                {
+                    response = BadRequest(new {error = result.Error });
+                }
+            }
+
+            
+
+
+            
+
+
+
+
+            
+
+
+ 
+
+            
+
+            return response;
+        }
+
 
         #endregion
 

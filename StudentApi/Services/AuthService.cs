@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using StudentApi.Models;
+using StudentApi.SendGrid;
 
 namespace StudentApi.Services
 {
@@ -108,7 +109,7 @@ namespace StudentApi.Services
                 {
                     LoginResult = false,
                     ErrorPassword = null,
-                    ErrorUsername = "Konto użutkownika zostało zablokowane"
+                    ErrorUsername = "Konto użytkownika zostało zablokowane"
                 };
             }
             else
@@ -136,6 +137,45 @@ namespace StudentApi.Services
         {
             var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
             return user.GitHubLogin;
+        }
+
+        public async Task<OperationResult> ResetUserPassword(UserInfo info, string apiKey)
+        {
+            var checkUser = await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Role == "Student").FirstOrDefaultAsync();
+            if (checkUser == null)
+            {
+                return new OperationResult
+                {
+                    Result = false,
+                    Error = "Brak studenta o podanym numerze albumu",
+                    Content = null
+                };
+            }
+
+
+            UserInfo user = await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.EmailAddress == info.EmailAddress && u.Role == "Student").FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return new OperationResult
+                {
+                    Result = false,
+                    Error = "Adres email nie jest zgodny z numerem alnumu studenta",
+                    Content = null
+                };
+            }
+
+            string newPassword = RandomPassword.GenerateTemporaryPassword();
+            using (SendGridSender sender = new SendGridSender(apiKey))
+            {
+                var result = await sender.SendEmail_ResetUserPassword(user.EmailAddress, user.FirstName, user.LastName, newPassword);
+                if (result.Result)
+                {
+                    user.Password = Cryptor.Encrypt(newPassword);
+                    await context.SaveChangesAsync();               
+                }
+
+                return result;
+            }
         }
     }
 }

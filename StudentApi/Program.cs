@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+
 namespace StudentApi
 {
     public class Program
@@ -22,5 +23,7 @@ namespace StudentApi
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        
     }
 }
