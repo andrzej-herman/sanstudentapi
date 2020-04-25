@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using System.Text;
 using StudentApi.Entities.MainPage;
+using StudentApi.Helpers;
 
 namespace StudentApi.Controllers
 {

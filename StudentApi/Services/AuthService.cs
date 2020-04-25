@@ -67,11 +67,57 @@ namespace StudentApi.Services
 
         public async Task<UserInfo> AuthenticateUser(UserInfo info)
         {
+            UserInfo user = null;
             string cryptedPass = Cryptor.Encrypt(info.Password);
+            UserInfo checkUser = null;
             if (info.AlbumNumber != null)
-                return await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
+                checkUser = await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Role == "Student").FirstOrDefaultAsync();
             else
-                return await context.Users.Where(u => u.Login == info.Login && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
+                checkUser = await context.Users.Where(u => u.Login == info.Login && u.Role == "Student").FirstOrDefaultAsync();
+
+            if (checkUser == null)
+            {
+                return new UserInfo
+                {
+                    LoginResult = false,
+                    ErrorUsername = "Brak studenta o podanym loginie lub numerze albumu",
+                    ErrorPassword = null,
+                };
+            }
+
+
+            if (info.AlbumNumber != null)
+                user = await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
+            else
+                user = await context.Users.Where(u => u.Login == info.Login && u.Password == cryptedPass && u.Role == "Student").FirstOrDefaultAsync();
+
+
+            if (user == null)
+            {
+                return new UserInfo
+                {
+                    LoginResult = false,
+                    ErrorPassword = "Nieprawidłowe hasło",
+                    ErrorUsername = null
+                };
+            }
+
+            if (user.IsBlocked)
+            {
+                return new UserInfo
+                {
+                    LoginResult = false,
+                    ErrorPassword = null,
+                    ErrorUsername = "Konto użutkownika zostało zablokowane"
+                };
+            }
+            else
+            {
+                user.LoginResult = true;
+                user.ErrorUsername = null;
+                user.ErrorPassword = null;
+                return user;
+            }
         }
 
         public async Task<string> GetUserPassword(string userId)
