@@ -159,7 +159,7 @@ namespace StudentApi.Services
                 return new OperationResult
                 {
                     Result = false,
-                    Error = "Adres email nie jest zgodny z numerem alnumu studenta",
+                    Error = "Adres email nie jest zgodny z numerem albumu studenta",
                     Content = null
                 };
             }

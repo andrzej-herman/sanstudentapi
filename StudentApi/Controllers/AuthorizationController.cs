@@ -166,7 +166,7 @@ namespace StudentApi.Controllers
             return JsonConvert.SerializeObject(user);
         }
 
-        [Authorize]
+
         [HttpPost("/api/resetpassword")]
         public async Task<IActionResult> ResetUserPassword()
         {
@@ -200,21 +200,6 @@ namespace StudentApi.Controllers
                     response = BadRequest(new {error = result.Error });
                 }
             }
-
-            
-
-
-            
-
-
-
-
-            
-
-
- 
-
-            
 
             return response;
         }
