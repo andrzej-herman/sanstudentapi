@@ -16,6 +16,7 @@ namespace StudentApi.Interfaces
         Task<string> GetUserLogin(string userId);
         Task<string> GetUserGitHubLogin(string userId);
         Task<OperationResult> ResetUserPassword(UserInfo info, string apiKey);
+        Task<int> GetSendGrid();
 
     }
 }

@@ -68,7 +68,6 @@ namespace StudentApi.SendGrid
             return sb.ToString();
         }
 
-
         public void Dispose()
         {
             client = null;

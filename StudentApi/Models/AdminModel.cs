@@ -10,5 +10,6 @@ namespace StudentApi.Models
         public string DisplayName { get; set; }
         public string Initials { get; set; }
         public string Password { get; set; }
+        public int SendGrid { get; set; }
     }
 }

@@ -88,6 +88,7 @@ namespace StudentApi.Controllers
             };
 
             admin.Password = await authorizationService.GetUserPassword(id);
+            admin.SendGrid = await authorizationService.GetSendGrid();
             return JsonConvert.SerializeObject(admin);
         }
 

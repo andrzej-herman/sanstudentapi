@@ -24,5 +24,6 @@ namespace StudentApi
         public DbSet<UserInfo> Users { get; set; }
         public DbSet<GroupInfo> Groups { get; set; }
         public DbSet<RelStudentGroup> Relation_StudentGroup { get; set; }
+        public DbSet<SendGridInfo> SendGrids { get; set; }
     }
 }

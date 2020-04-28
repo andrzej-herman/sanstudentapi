@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using StudentApi.Models;
 using StudentApi.SendGrid;
+using StudentApi.Entities.Data;
 
 namespace StudentApi.Services
 {
@@ -170,12 +171,66 @@ namespace StudentApi.Services
                 var result = await sender.SendEmail_ResetUserPassword(user.EmailAddress, user.FirstName, user.LastName, newPassword);
                 if (result.Result)
                 {
+                    await IncreaseSendGridAccount();
                     user.Password = Cryptor.Encrypt(newPassword);
                     await context.SaveChangesAsync();               
                 }
 
                 return result;
+            }   
+        }
+
+        public async Task<int> GetSendGrid()
+        {
+            var sendGrids = await context.SendGrids.OrderByDescending(s => s.SendDate).ToListAsync();
+            var lastDate = sendGrids.FirstOrDefault();
+            if (lastDate == null)
+                return 0;
+            else
+            {
+                var today = DateTime.Now.ToString().Substring(0, 10);
+                if (lastDate.DateComparer == today)
+                    return lastDate.NumberOfSends;
+                else
+                    return 0;
             }
         }
+
+
+        private async Task IncreaseSendGridAccount()
+        {
+            var sendGrids = context.SendGrids.OrderByDescending(s => s.SendDate).ToList();
+            var lastDate = sendGrids.FirstOrDefault();
+            if (lastDate == null)
+            {
+                await context.SendGrids.AddAsync(CreateNewSendGridInfo());
+            }
+            else
+            {
+                var today = DateTime.Now.ToString().Substring(0, 10);
+                if (lastDate.DateComparer == today)
+                {
+                    lastDate.NumberOfSends++;
+                }
+                else
+                {
+                    await context.SendGrids.AddAsync(CreateNewSendGridInfo());
+                }
+            }
+
+            await context.SaveChangesAsync();
+
+        }
+
+        private SendGridInfo CreateNewSendGridInfo()
+        {
+            SendGridInfo info = new SendGridInfo();
+            info.Id = Guid.NewGuid().ToString();
+            info.SendDate = DateTime.Now;
+            info.NumberOfSends = 1;
+            return info;
+        }
+
+       
     }
 }
