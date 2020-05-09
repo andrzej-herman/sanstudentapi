@@ -172,6 +172,17 @@ namespace StudentApi.Services
             var users = await context.Users.Where(u => u.Role == "Student").ToListAsync();
             foreach (var user in users)
             {
+                List<ShortGroupModel> groupList = new List<ShortGroupModel>();
+                var groupIds = await context.Relation_StudentGroup.Where(r => r.StudentId == user.Id).Select(r => r.GroupId).ToListAsync();
+                foreach (var id in groupIds)
+                {
+                    ShortGroupModel model = new ShortGroupModel();
+                    model.Id = id;
+                    var gr = context.Groups.FirstOrDefault(g => g.Id == id);
+                    model.Name = $"{gr.Subject} ({gr.Name})";
+                    groupList.Add(model);
+                }
+
                 res.Add(
                    new Student
                    {
@@ -187,7 +198,9 @@ namespace StudentApi.Services
                         DateRegistered = user.DateRegistered,
                         DateBlocked = user.DateBlocked,
                         Login = user.Login,
-                        GitHubLogin = user.GitHubLogin
+                        GitHubLogin = user.GitHubLogin,
+                        AvatarPath = user.AvatarPath,
+                        Groups = groupList
                     });
             }
 

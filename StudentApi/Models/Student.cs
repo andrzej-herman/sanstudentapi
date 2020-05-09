@@ -20,8 +20,11 @@ namespace StudentApi.Models
         public DateTime? DateBlocked { get; set; }
         public string Login { get; set; }
         public string GitHubLogin { get; set; }
+        public List<ShortGroupModel> Groups { get; set; }
+        public string AvatarPath { get; set; }
 
-        public string GitHub
+
+        public string GitHubUrl
         {
             get
             {

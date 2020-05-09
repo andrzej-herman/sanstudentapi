@@ -212,8 +212,5 @@ namespace StudentApi.Controllers
 
         #endregion
 
-
-
-
     }
 }
