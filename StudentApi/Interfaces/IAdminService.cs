@@ -20,5 +20,9 @@ namespace StudentApi.Interfaces
         Task<List<StudentGroup>> GetAllGroups();
 
         Task<OperationResult> ChangeGroupStatus(string id);
+
+        Task<OperationResult> AddStudentToGroup(AddRemoveStudentToGroupModel model);
+
+        Task<OperationResult> RemoveStudentFromGroup(AddRemoveStudentToGroupModel model);
     }
 }

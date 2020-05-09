@@ -143,7 +143,6 @@ namespace StudentApi.Services
             }
         }
 
-
         public async Task<OperationResult> ChangeGroupStatus(string id)
         {
             OperationResult result = new OperationResult();
@@ -223,8 +222,83 @@ namespace StudentApi.Services
             }
 
             return groups;
-        } 
+        }
 
+        public async Task<OperationResult> AddStudentToGroup(AddRemoveStudentToGroupModel model)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var album = model.ToString();
+                var student = await context.Users.FirstOrDefaultAsync(u => u.AlbumNumber == album);
+                if (student != null)
+                {
+                    RelStudentGroup rel = new RelStudentGroup();
+                    rel.GroupId = model.Group;
+                    rel.StudentId = student.Id;
+                    await context.Relation_StudentGroup.AddAsync(rel);
+                    await context.SaveChangesAsync();
+                    result.Result = true;
+                    result.Content = "Student został dodany do grupy";
+                    result.Error = null;
+                    return result;
+                }
+                else
+                {
+                    result.Result = false;
+                    result.Error = "Nieprawisłówy numer albumu studenta";
+                    result.Content = null;
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Result = false;
+                result.Error = ex.ToString();
+                result.Content = null;
+                return result;
+            }
+        }
+
+        public async Task<OperationResult> RemoveStudentFromGroup(AddRemoveStudentToGroupModel model)
+        {
+            OperationResult result = new OperationResult();
+            try
+            {
+                var relation = await context.Relation_StudentGroup.FirstAsync(rsg => rsg.StudentId == model.Student
+                                     && rsg.GroupId == model.Group);
+
+                if (relation != null)
+                {
+                    context.Relation_StudentGroup.Remove(relation);
+                    await context.SaveChangesAsync();
+                }
+                    
+                result.Result = true;
+                result.Error = null;
+                result.Content = "Student został usunięty z grupy studenckiej";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.Result = false;
+                result.Error = ex.ToString();
+                result.Content = null;
+                return result;
+            }
+        }
+
+
+
+        #region Private
+        
+        //private string StudentToAlbumNumber(this string student)
+        //{
+        //    int fp = student.IndexOf('(');
+        //    int sp = student.IndexOf(')');
+        //    int count = sp - fp;
+        //    return student.Substring(fp, count);
+        //}
 
         private bool ValidateStudentData(string albumNumber, string email, string firstName, string lastName, out string error)
         {
@@ -292,8 +366,6 @@ namespace StudentApi.Services
             }
         }
 
-       
-
         private bool ValidateGroupData(GroupInfo group, out string error)
         {
             error = "Nieprawidłowy rok akademicki";
@@ -301,7 +373,7 @@ namespace StudentApi.Services
 
             if (group.Year.Length == 9)
             {
-               if (group.Year.Substring(4, 1) == "/")
+                if (group.Year.Substring(4, 1) == "/")
                 {
                     string[] data = group.Year.Split("/");
                     if (RandomPassword.IsNumeric(data[0]) && RandomPassword.IsNumeric(data[1]))
@@ -313,8 +385,9 @@ namespace StudentApi.Services
             }
 
             return res;
-        }
+        } 
+        #endregion
 
-        
+
     }
 }

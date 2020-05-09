@@ -143,6 +143,73 @@ namespace StudentApi.Controllers
             return response;
         }
 
+
+        [Authorize]
+        [HttpPost("/api/addstudenttogroup")]
+        public async Task<IActionResult> AddStudentToGroup()
+        {
+            string body;
+            AddRemoveStudentToGroupModel model;
+            IActionResult response = BadRequest(new { error = "Wystąpił błąd podczas aktualizacji danych grupy" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            try
+            {
+                model = JsonConvert.DeserializeObject<AddRemoveStudentToGroupModel>(body);
+            }
+            catch (Exception)
+            {
+                return response;
+            }
+
+            if (model != null)
+            {
+                var result = await adminService.AddStudentToGroup(model);
+                if (!result.Result)
+                    response = BadRequest(new { error = result.Error });
+                else
+                    response = Ok(new { text = result.Content });
+            }
+
+            return response;
+        }
+
+        [Authorize]
+        [HttpPost("/api/removestudentfromgroup")]
+        public async Task<IActionResult> RemoveStudentToGroup()
+        {
+            string body;
+            AddRemoveStudentToGroupModel model;
+            IActionResult response = BadRequest(new { error = "Wystąpił błąd podczas aktualizacji danych grupy" });
+            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+            {
+                body = await reader.ReadToEndAsync();
+            }
+
+            try
+            {
+                model = JsonConvert.DeserializeObject<AddRemoveStudentToGroupModel>(body);
+            }
+            catch (Exception)
+            {
+                return response;
+            }
+
+            if (model != null)
+            {
+                var result = await adminService.RemoveStudentFromGroup(model);
+                if (!result.Result)
+                    response = BadRequest(new { error = result.Error });
+                else
+                    response = Ok(new { text = result.Content });
+            }
+
+            return response;
+        }
+
         #endregion
 
 
