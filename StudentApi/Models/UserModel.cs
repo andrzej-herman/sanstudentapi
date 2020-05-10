@@ -20,7 +20,11 @@ namespace StudentApi.Models
         public string Login { get; set; }
         public string GitHubLogin { get; set; }
 
-        public string GitHub
+        public string AvatarPath { get; set; }
+
+        public List<ShortGroupModel> Groups { get; set; }
+
+        public string GitHubUrl
         {
             get
             {

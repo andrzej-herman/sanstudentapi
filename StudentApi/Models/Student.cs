@@ -23,6 +23,16 @@ namespace StudentApi.Models
         public List<ShortGroupModel> Groups { get; set; }
         public string AvatarPath { get; set; }
 
+        public string Initials
+        {
+            get
+            {
+                if (FirstName != null && LastName != null)
+                    return FirstName.Substring(0, 1).ToUpper() + LastName.Substring(0, 1).ToUpper();
+                else
+                    return "";
+            }
+        }
 
         public string GitHubUrl
         {

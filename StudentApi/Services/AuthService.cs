@@ -140,6 +140,29 @@ namespace StudentApi.Services
             return user.GitHubLogin;
         }
 
+        public async Task<string> GetUserAvatar(string userId)
+        {
+            var user = await context.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+            return user.AvatarPath;
+        }
+
+        public async Task<List<ShortGroupModel>> GetUserGroups(string userId)
+        {
+            List<ShortGroupModel> groupList = new List<ShortGroupModel>();
+            var groupIds = await context.Relation_StudentGroup.Where(r => r.StudentId == userId).Select(r => r.GroupId).ToListAsync();
+            foreach (var id in groupIds)
+            {
+                ShortGroupModel model = new ShortGroupModel();
+                model.Id = id;
+                var gr = context.Groups.FirstOrDefault(g => g.Id == id);
+                model.Name = $"{gr.Subject} ({gr.Name})";
+                groupList.Add(model);
+            }
+
+            return groupList;
+        }
+
+
         public async Task<OperationResult> ResetUserPassword(UserInfo info, string apiKey)
         {
             var checkUser = await context.Users.Where(u => u.AlbumNumber == info.AlbumNumber && u.Role == "Student").FirstOrDefaultAsync();
@@ -231,6 +254,6 @@ namespace StudentApi.Services
             return info;
         }
 
-       
+        
     }
 }
