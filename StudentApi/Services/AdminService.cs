@@ -305,13 +305,6 @@ namespace StudentApi.Services
 
         #region Private
         
-        //private string StudentToAlbumNumber(this string student)
-        //{
-        //    int fp = student.IndexOf('(');
-        //    int sp = student.IndexOf(')');
-        //    int count = sp - fp;
-        //    return student.Substring(fp, count);
-        //}
 
         private bool ValidateStudentData(string albumNumber, string email, string firstName, string lastName, out string error)
         {
