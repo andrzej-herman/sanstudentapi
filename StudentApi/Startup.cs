@@ -1,25 +1,20 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using StudentApi.Interfaces;
 using StudentApi.Services;
+using Microsoft.OpenApi.Models;
+
 
 namespace StudentApi
 {
@@ -82,6 +77,11 @@ namespace StudentApi
                     assembly => assembly.MigrationsAssembly(typeof(SanStudentContext).Assembly.FullName));
             });
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "San Student Admin API", Version = "v1" });
+            });
+
             services.AddScoped<IMainPageService, MainPageService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAdminService, AdminService>();
@@ -104,6 +104,11 @@ namespace StudentApi
                 RequestPath = new PathString("/StudentData")
             });
             app.UseRouting();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "San Student Admin API");
+            });
             app.UseAuthentication();
             app.UseAuthorization();
             // app.UseSession();
